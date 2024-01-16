@@ -18,7 +18,7 @@ module.exports = {
   reporters: ['default', 'jest-sonar'],
 
   // An array of regexp pattern strings used to skip coverage collection
-  coveragePathIgnorePatterns: ['node_modules', 'server/helpers/generalHelper.js', 'server/services/database.js'],
+  coveragePathIgnorePatterns: ['node_modules', 'server/helpers/generalHelper.js', 'models/index.js'],
 
   coverageThreshold: {
     global: {

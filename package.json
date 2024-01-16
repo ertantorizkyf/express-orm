@@ -18,13 +18,14 @@
     "boom": "^7.3.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "ioredis": "^5.2.4",
     "joi": "13.0.2",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
+    "mysql2": "^2.3.3",
     "promise-mysql2": "^1.0.0",
     "qs": "^6.10.3",
-    "semver": "^7.3.5"
+    "sequelize": "^6.23.1",
+    "sequelize-cli": "^6.6.2"
   },
   "devDependencies": {
     "@types/jest": "^27.5.1",
