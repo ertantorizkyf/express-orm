@@ -7,6 +7,7 @@ const Port = process.env.NODEJS_PORT || 8080;
 
 // Import routes
 const PokemonDatabase = require('./server/api/pokemonDatabase');
+const Blog = require('./server/api/blog');
 
 dotenv.config();
 
@@ -70,6 +71,7 @@ app.use((req, res, next) => {
 
 // Route middlewares
 app.use('/pokemon-database', PokemonDatabase);
+app.use('/blog', Blog);
 
 // Sys ping api 
 app.get('/sys/ping', (req, res) => {
