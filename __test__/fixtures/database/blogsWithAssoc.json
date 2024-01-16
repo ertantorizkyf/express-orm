@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "name": "ACME Daily",
+    "description": "Daily Blogs, brought to you by ACME",
+    "owner": "Acme Corporation",
+    "posts": [
+      {
+        "id": 20,
+        "title": "New Line of Explosives",
+        "body": "Look at our new products, a line of explosives. We're hopping it'll blow up the market; you get what I mean.",
+        "blog_id": 1
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "What A Blog",
+    "description": "Just pouring my thoughts out",
+    "owner": "Jane Doe",
+    "posts": [
+      {
+        "id": 45,
+        "title": "Haiku Attempt",
+        "body": "Peter Piper Picked; A Peck of Pickled Peppers; Who's Pickled Peppers?",
+        "blog_id": 2
+      },
+      {
+        "id": 46,
+        "title": "Remembering Sunday",
+        "body": "Do you miss those times where~",
+        "blog_id": 2
+      }
+    ]
+  }
+]
+  
