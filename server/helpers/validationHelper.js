@@ -1,20 +1,10 @@
 const Joi = require('joi');
 const Boom = require('boom');
 
-const pokemonListDatabaseValidation = (data) => {
+const blogListValidation = (data) => {
   const schema = Joi.object({
-    name: Joi.string().optional().description('Pokemon name; i.e. Bulbasaur')
-  });
-
-  if (schema.validate(data).error) {
-    throw Boom.badRequest(schema.validate(data).error);
-  }
-};
-
-const pokemonAddDatabaseValidation = (data) => {
-  const schema = Joi.object({
-    name: Joi.string().required().description('Pokemon name; i.e. Bulbasaur'),
-    url: Joi.string().required().description('https://pokeapi.co/api/v2/pokemon/4')
+    offset: Joi.number().optional().description('Starting position in which data will be shown'),
+    limit: Joi.number().optional().description('Number of data to be shown')
   });
 
   if (schema.validate(data).error) {
@@ -23,6 +13,5 @@ const pokemonAddDatabaseValidation = (data) => {
 };
 
 module.exports = {
-  pokemonListDatabaseValidation,
-  pokemonAddDatabaseValidation
+  blogListValidation
 };
