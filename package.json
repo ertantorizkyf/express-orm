@@ -15,10 +15,12 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^1.6.2",
+    "bcryptjs": "^2.4.3",
     "boom": "^7.3.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "joi": "13.0.2",
+    "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "mysql2": "^2.3.3",
