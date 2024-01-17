@@ -1,5 +1,6 @@
 const Router = require('express').Router();
 
+const Middleware = require('../middlewares/authMiddleware');
 const Validation = require('../helpers/validationHelper');
 const AuthHelper = require('../helpers/authHelper');
 const GeneralHelper = require('../helpers/generalHelper');
@@ -34,7 +35,14 @@ const login = async (request, reply) => {
   }
 }
 
+// eslint-disable-next-line arrow-body-style
+const hello = async (request, reply) => {
+  // SAMPLE API WITH JWT MIDDLEWARE 
+  return reply.send('HELLO');
+}
+
 Router.post('/register', register);
 Router.post('/login', login);
+Router.get('/hello', Middleware.validateToken, hello);
 
 module.exports = Router;

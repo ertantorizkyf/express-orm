@@ -1,5 +1,6 @@
 const Request = require('supertest');
 const _ = require('lodash');
+const jwt = require('jsonwebtoken');
 
 const db = require('../../models');
 const GeneralHelper = require('../../server/helpers/generalHelper');
@@ -9,9 +10,12 @@ const MockUser = require('../fixtures/database/user.json');
 let apiUrl;
 let server;
 let payload;
+let header;
 let mockUser;
 let getUser;
 let createUser;
+let jwtVerify;
+let mockJsonWebTokenData;
 
 describe('Auth', () => {
   beforeAll(() => {
@@ -105,7 +109,8 @@ describe('Auth', () => {
         .send(payload)
         .expect(200)
         .then((res) => {
-          expect(res.body).toBeTruthy();
+          expect(!_.isEmpty(res.body)).toBeTruthy();
+          expect(!_.isEmpty(res.body.token)).toBeTruthy();
         });
     });
 
@@ -153,6 +158,98 @@ describe('Auth', () => {
         .post(apiUrl)
         .send(payload)
         .expect(500);
+    });
+  });
+
+  describe('JWT Middleware', () => {
+    beforeEach(() => {
+      apiUrl = '/hello';
+      header = {
+        authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSmFuZSBEb2UiLCJwYXNzd29yZCI6IiQyYSQxMCRtR2Y2dTZXYkpUZFNCbzZHQ1FOOC9lTG5SQWlTc2ZMZXNsVnN1aWZtbS53akVBcWZZTzI3aSIsImlhdCI6MTcwNTQ3NzQ0MywiZXhwIjoxNzA1NTYzODQzfQ.MKSb_hkLJxmIvpI-bLc3vJQIVNAcnxtzRmKTzHXZTUg'
+      }
+
+      mockJsonWebTokenData = {
+        name: "Jane Doe",
+        password: "$2a$10$mGf6u6WbJTdSBo6GCQN8/eLnRAiSsfLeslVsuifmm.wjEAqfYO27i",
+        iat: 1705477443,
+        exp: 4070908800
+      };
+
+      jwtVerify = jest.spyOn(jwt, 'verify');
+      jwtVerify.mockImplementation(() => mockJsonWebTokenData);
+    });
+
+    test('Should Return 200: JWT Verify Sucess', async () => {
+      await Request(server)
+        .get(apiUrl)
+        .set(header)
+        .expect(200);
+    });
+
+    test('Should Return 401: JWT Does Not Contain Expiry Epoch', async () => {
+      delete mockJsonWebTokenData.exp;
+      jwtVerify.mockImplementation(() => mockJsonWebTokenData);
+
+      await Request(server)
+        .get(apiUrl)
+        .set(header)
+        .expect(401);
+    });
+
+    test('Should Return 401: JWT Expired', async () => {
+      mockJsonWebTokenData.exp = 946684800;
+      jwtVerify.mockImplementation(() => mockJsonWebTokenData);
+
+      await Request(server)
+        .get(apiUrl)
+        .set(header)
+        .expect(401);
+    });
+
+    test('Should Return 401: JWT Empty', async () => {
+      mockJsonWebTokenData = {};
+      jwtVerify.mockImplementation(() => mockJsonWebTokenData);
+
+      await Request(server)
+        .get(apiUrl)
+        .set(header)
+        .expect(401);
+    });
+
+    test('Should Return 401: JWT Empty', async () => {
+      mockJsonWebTokenData = {};
+      jwtVerify.mockImplementation(() => mockJsonWebTokenData);
+
+      await Request(server)
+        .get(apiUrl)
+        .set(header)
+        .expect(401);
+    });
+
+    test('Should Return 401: Invalid JWT Secret', async () => {
+      header.authorization = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+      jwtVerify.mockImplementation(() => new Error('Invalid Secret'));
+
+      await Request(server)
+        .get(apiUrl)
+        .set(header)
+        .expect(401);
+    });
+
+    test('Should Return 401: Malformed Token', async () => {
+      header.authorization = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9';
+      jwtVerify.mockImplementation(() => new Error('Malformed Token'));
+
+      await Request(server)
+        .get(apiUrl)
+        .set(header)
+        .expect(401);
+    });
+
+    test('Should Return 401: Header Not Sent', async () => {
+      await Request(server)
+        .get(apiUrl)
+        .expect(401);
     });
   });
 });
