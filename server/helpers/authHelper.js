@@ -30,6 +30,13 @@ const registerUser = async (dataObject) => {
   const { name, email, password } = dataObject;
 
   try {
+    const user = await db.User.findOne({
+      where: { email }
+    });
+    if (!_.isEmpty(user)) {
+      return Promise.reject(Boom.badRequest('EMAIL_HAS_BEEN_USED'));
+    }
+
     const hashedPass = __hashPassword(password)
     await db.User.create({ name, email, password: hashedPass });
     

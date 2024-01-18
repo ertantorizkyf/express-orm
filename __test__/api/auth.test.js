@@ -31,15 +31,19 @@ describe('Auth', () => {
       apiUrl = '/register';
       payload = { 
         name: 'Jane Doe',
-        email: 'janedoe@acme.com',
+        email: 'janedoe@gmail.com',
         password: '12345678',
         confirmPassword: '12345678'
       };
 
+      mockUser = _.cloneDeep(MockUser);
+
+      getUser = jest.spyOn(db.User, 'findOne');
       createUser = jest.spyOn(db.User, 'create');
     });
 
     test('Should Return 200: Register Success', async () => {
+      getUser.mockResolvedValue({});
       createUser.mockResolvedValue('SUCCESS');
       
       await Request(server)
@@ -49,6 +53,17 @@ describe('Auth', () => {
         .then((res) => {
           expect(res.body).toBeTruthy();
         });
+    });
+
+    test('Should Return 400: Email Already Exists', async () => {
+      payload.email = 'janedoe@acme.com';
+      getUser.mockResolvedValue(mockUser);
+      createUser.mockResolvedValue('SUCCESS');
+      
+      await Request(server)
+        .post(apiUrl)
+        .send(payload)
+        .expect(400);
     });
 
     test('Should Return 400: Missing Required Payload', async () => {
